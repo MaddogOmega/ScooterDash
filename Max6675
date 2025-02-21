@@ -1,10 +1,13 @@
 #This is my cylinder head temperature test file before I put it in a main code. Everything I post will be tested first.
+# please look at pinout.xyz/pinout for more info, plus my readme information.
+#I use SPI1 pins 18 CS(CEO), 19 DO, 20 MOSI, 21 SCLK 
 import spidev
 import time
 
 # Define SPI parameters for MAX6675
-SPI_BUS = 1
-SPI_DEVICE = 0
+SPI_BUS = 1 # comment this out and uncomment the next line for SPI0
+#SPI_BUS = 0 # SPI0 information 8 CS(CEO), 9 DO, 10 MOSI, 11 SCLK or 7 CS(CE1) your choice on CS
+SPI_DEVICE = 0 # 0 for CE0, 1 for CE1, 2 for CE2 again pinout.xyz/pinout should help
 spi = spidev.SpiDev()
 spi.open(SPI_BUS, SPI_DEVICE)
 spi.max_speed_hz = 1000000
