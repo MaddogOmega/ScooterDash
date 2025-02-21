@@ -1,0 +1,19 @@
+# More test code. I adjusted line 14 to .47 for some reason .25 didn't work with my sensor. It was a quick cal with hot water and ice water.
+from gpiozero import MCP3008
+import time
+
+
+tank_level = MCP3008(channel=1) #battery voltage
+battery_voltage = MCP3008(channel=0) #actual fuel input
+
+# works voltage and fuel need values adjusted for your setup
+while True:
+    reading = battery_voltage.value
+    level = tank_level.value
+    voltage = reading * 5 # multiply by 5 to get battery voltage of scooter
+    fuel = (level / .73) * 100 # .047 is low value and .73 is high value for fuel level
+    print("Reading= {:.2f}\tVoltage={:.2f}".format(reading, voltage))
+    print(battery_voltage.value)
+    print("Reading= {:.2f}\tFuel={:.2f}".format(level, fuel))
+    print(tank_level.value)
+    time.sleep(1)
