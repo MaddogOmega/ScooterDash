@@ -1,6 +1,7 @@
 #This is my cylinder head temperature test file before I put it in a main code. Everything I post will be tested first.
 # please look at pinout.xyz/pinout for more info, plus my readme information.
-#I use SPI1 pins 18 CS(CEO), 19 DO, 20 MOSI, 21 SCLK 
+#I use SPI1 pins 18 CS(CEO), 19 DO, 20 MOSI, 21 SCLK
+
 import spidev
 import time
 
