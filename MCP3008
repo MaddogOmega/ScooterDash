@@ -1,6 +1,6 @@
 # This is out of Raspberry Pi cookbook by "Simon Monk" with some modifications.
 # More test code. I adjusted line 14 to .47 for some reason .25 didn't work with my sensor. It was a quick cal with hot water and ice water.
-# I might change voltage to my fuel tank to 5v. 
+# I might change voltage to my fuel tank to 5v. pi pins: 8 CS , 9 DO, 10 MOSI , 11 CLK, on the MCP chip 15, 16 are tied to 3.3v and 9, 14 to ground.
 
 from gpiozero import MCP3008
 import time
