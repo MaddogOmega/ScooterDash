@@ -1,0 +1,70 @@
+# I got the max31855 working but the numbers were not as good as the max6675. 
+# a lot of it had to do with breaking apart the first bit, then 14 bits for temp.
+# this snippet can get you started communicating and not getting 0's back or 32 degrees.
+# I think I got this from google AI but changed the SPI mode for it would work. 
+# CS low to read, read on the falling edge. 
+# sorry this needs tweaking to get good numbers.
+
+import spidev
+import time
+
+
+spi = spidev.SpiDev()
+spi.open(1, 0) # Open SPI port 1, device (CS) 0 I am using SPI1 refer to readme file.
+spi.max_speed_hz = 1000000
+spi.mode = 0b10 # Set SPI mode 2 I wouldn't change this
+
+def read_max31855():
+    data = spi.readbytes(4)
+    
+    # Raw data processing
+    raw = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3]
+
+    # Check for errors
+    if raw & 0x7:
+        if raw & 0x1:
+            raise ValueError("Fault: No thermocouple connected")
+        if raw & 0x2:
+            raise ValueError("Fault: Short to GND")
+        if raw & 0x4:
+            raise ValueError("Fault: Short to VCC")
+    
+    # Extract thermocouple temperature
+    thermocouple_temp = (raw >> 18) & 0x3FFF 
+    if raw & 0x80000000:
+        thermocouple_temp -= 16384
+    thermocouple_temp *= 0.25
+
+    # Extract internal temperature
+    internal_temp = (raw >> 4) & 0xFFF
+    if raw & 0x1000:
+        internal_temp -= 4096
+    internal_temp *= 0.0625
+    
+    return thermocouple_temp, internal_temp
+
+try:
+    while True:
+        thermocouple_temp, internal_temp = read_max31855()
+        print(f"Thermocouple Temperature: {thermocouple_temp:.2f} F")
+        print(f"Internal Temperature: {internal_temp:.2f} F")
+        time.sleep(1)
+
+except ValueError as e:
+    print(e)
+
+except KeyboardInterrupt:
+    spi.close()
+    print("SPI connection closed.")
+
+
+
+# some program idea stuff
+# read = (bin(num << 1)) # shift left 1 to get rid of MSB, then convert to binary string
+# shorten to correct length sign bit plus 14 bit temp value.. 15 shift 1 then display 14 bits
+# print (read)  # print (read[1:15]) # print 14 bits of temp value, ignore sign bit and MSB
+# decimal_num = int(binary_string, 2) # convert to decimal
+# print (decimal_num) # print decimal value of temp value
+# celsius = decimal_num * 0.25 # convert to celsius
+# Fahrenheit = (celsius * 9/5) + 32 # convert to fahrenheit
+
