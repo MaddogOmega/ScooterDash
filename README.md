@@ -15,5 +15,5 @@ dtparam=spi=on #spi on
 
 dtoverlay=spi1-3cs # enable SPI1 this will give you SPI1 with CE0,CE1,CE2 
 
-# google ai made part of my code I had to make some changes to get the ride spi mode. Google thinks it is mode 1 which will draw a fault
-I use 0b10 or mode 2.
+# google ai made part of my code I had to make some changes to get the right spi mode. Google thinks it is mode 1 which will draw a fault
+I use 0b10 or mode 2. CS low to read, falling edge of the clock.
