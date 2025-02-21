@@ -4,7 +4,7 @@
 #Pins 2 to Vcc, 6 to GND, 10 to TX
 #function $GPVTG 2,8 true north, cog/speed
 #function $GPGGA 0,1,3,6,8 time, lat, long, satelites, altitude
-# deleting webrowser not suitable for pi zero 2
+# deleting webbrowser not suitable for pi zero 2
 
 import serial               #import serial package
 from time import sleep
