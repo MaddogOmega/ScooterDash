@@ -1,0 +1,36 @@
+#This is my cylinder head temperature test file before I put it in a main code. Everything I post will be tested first.
+import spidev
+import time
+
+# Define SPI parameters for MAX6675
+SPI_BUS = 1
+SPI_DEVICE = 0
+spi = spidev.SpiDev()
+spi.open(SPI_BUS, SPI_DEVICE)
+spi.max_speed_hz = 1000000
+spi.mode = 0b10  # SPI mode 0b10 (CPOL=1, CPHA=0) 
+
+# Function to read temperature from MAX6675
+def read_temp():
+    # Read two bytes of data
+    data = spi.readbytes(2)
+    
+    # Combine bytes and shift to get temperature data (ignoring the fault bit)
+    temp_data = (data[0] << 8 | data[1]) >> 3
+    
+    # Convert to Celsius (0.25 degrees per bit)
+    celsius = temp_data * 0.25
+    
+    fahrenheit = celsius * 9.0 / 5.0 + 32.0
+    
+    return fahrenheit
+
+try:
+    while True:
+        temperature = read_temp()
+        print(f"Temperature: {temperature:.2f} Â°F ")
+        time.sleep(1)
+
+except KeyboardInterrupt:
+    spi.close()
+    print("SPI connection closed.")
