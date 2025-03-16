@@ -1,6 +1,9 @@
-#under construction
+#no longer under construction 3/16/2025 I made some changes to the conversion. Now they come out correct with my actual location.
+#I probably wont do much updates from this point as it is already in my project and functions like I need.
+#GT-U7 brakes it down different than I thought. 1234.56789 12 degrees, 34 minutes, .56789 * 60 seconds
+#I tried using [2:] string manipulation but this got me now where so went with basic math. 
 #I got this from electronic wings https://www.electronicwings.com/. highly modified
-# functions and printing to screen. heading/compass may turn a dial. 
+# functions and printing to screen.
 #Pins 2 to Vcc, 6 to GND, 10 to TX
 #function $GPVTG 2,6 true north, cog/speed
 #function $GPGGA 0,1,3,6,8 time, lat, long, satelites, altitude
@@ -44,9 +47,9 @@ def GPSGGA():
 def convert_to_degrees(raw_value):
     decimal_degrees = raw_value/100.00
     degrees = int(decimal_degrees)
-    minutes = int((decimal_degrees - degrees) * 60)
-    seconds = (decimal_degrees - degrees - minutes/60) * 3600
-    return f"{degrees}° {minutes}' {seconds:.2f}\""
+    minutes = int(raw_value-(degrees * 100))
+    seconds = ((raw_value - (degrees * 100) - minutes)*60)
+    return f"{degrees} {minutes}' {seconds:.2f}\""
     
     
 
