@@ -1,0 +1,51 @@
+import RPi.GPIO as GPIO
+import time
+speed=0 
+#please uninstall rpi.gpio and install rpi-lgpio I struggled with edge detection with this for quite awhile
+#google made this with an idea for measuring frequency and converting to RPM or speed
+
+#I may add smoothing later. I have a slight flicker that could be the magnets or drive system.
+  
+HALL_SENSOR_PIN = 23  #Your pin goes here. I use BCM not BOARD.
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(HALL_SENSOR_PIN, GPIO.IN)
+
+def measure_frequency(speed):
+    """Measures the frequency of the Hall effect sensor."""
+    last_state = GPIO.input(HALL_SENSOR_PIN)
+    last_time = time.time()
+    pulse_count = 0
+
+    while True:
+        current_state = GPIO.input(HALL_SENSOR_PIN)
+        current_time = time.time()
+        if current_state == last_state and current_time - last_time > 1:#may have to increase this time
+            print("Frequency is equal to zero.")
+            print(f"Speed: {speed:.1f}MPH")
+            frequency = 0
+            speed = 0
+            
+        if current_state != last_state:
+            if current_state == 1:  # Rising edge
+                pulse_count += 1
+                time_difference = current_time - last_time
+                if time_difference > 0:
+                  frequency = 1 / time_difference
+                  print(f"Frequency: {frequency:.2f} Hz")
+                  speed = (frequency * 10)/10.476 # this conversion is based on 6 magnets and 10.576 comes from (5280 a mile / 8.4' tire travels one rev)/60.
+                  # change 60 based on your magnet count if your going for rpm... my rpm is slow 10 to about 800 RPM, reason for 6 magnets
+                  # rpm = (frequency * 60) 
+                  print(f"Speed: {speed:.1f}MPH")
+                #if time_difference > 1:
+                else:
+                   print("Frequency: Infinite or Undefined (Time difference is zero)")
+                last_time = current_time
+            last_state = current_state
+
+if __name__ == "__main__":
+    try:
+        measure_frequency(speed)
+    except KeyboardInterrupt:
+        GPIO.cleanup()
+        print("Program terminated.")
+
